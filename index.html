@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CAA Drone Theory Test - Practice Exam</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body { 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+    
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    
+    .header {
+      text-align: center;
+      color: white;
+      margin-bottom: 2rem;
+    }
+    
+    .header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    .header p {
+      font-size: 1.1rem;
+      opacity: 0.95;
+      margin-bottom: 0.5rem;
+    }
+    
+    .test-info {
+      background: rgba(255,255,255,0.2);
+      padding: 1rem;
+      border-radius: 8px;
+      margin-top: 1rem;
+      backdrop-filter: blur(10px);
+    }
+    
+    .test-info p {
+      margin: 0.3rem 0;
+    }
+    
+    .progress-bar {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    
+    .progress-info {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+      font-weight: 600;
+      color: #2d3748;
+    }
+    
+    .progress-track {
+      height: 12px;
+      background: #e2e8f0;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+      transition: width 0.3s ease;
+      width: 0%;
+    }
+    
+    .quiz-card {
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      margin-bottom: 1.5rem;
+    }
+    
+    .question-block {
+      margin-bottom: 2rem;
+      padding-bottom: 2rem;
+      border-bottom: 2px solid #f0f0f0;
+    }
+    
+    .question-block:last-of-type {
+      border-bottom: none;
+    }
+    
+    .question-text {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #2d3748;
+      margin-bottom: 1rem;
+      line-height: 1.5;
+    }
+    
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    
+    .option-label {
+      display: flex;
+      align-items: flex-start;
+      padding: 1rem;
+      background: #f7fafc;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .option-label:hover {
+      background: #edf2f7;
+      border-color: #667eea;
+      transform: translateX(5px);
+    }
+    
+    .option-label input[type="radio"] {
+      margin-right: 0.75rem;
+      margin-top: 0.2rem;
+      min-width: 20px;
+      height: 20px;
+      cursor: pointer;
+    }
+    
+    .option-label.correct {
+      background: #c6f6d5;
+      border-color: #48bb78;
+    }
+    
+    .option-label.incorrect {
+      background: #fed7d7;
+      border-color: #f56565;
+    }
+    
+    .button-container {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-top: 2rem;
+      flex-wrap: wrap;
+    }
+    
+    .submit-btn, .reset-btn {
+      padding: 1rem 2.5rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .submit-btn {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+    
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+    }
+    
+    .reset-btn {
+      background: #718096;
+      color: white;
+    }
+    
+    .reset-btn:hover {
+      background: #4a5568;
+      transform: translateY(-2px);
+    }
+    
+    .results-card {
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      display: none;
+      text-align: center;
+    }
+    
+    .results-card.show {
+      display: block;
+      animation: slideIn 0.5s ease;
+    }
+    
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .score-display {
+      font-size: 3rem;
+      font-weight: bold;
+      color: #667eea;
+      margin-bottom: 0.5rem;
+    }
+    
+    .pass-status {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      display: inline-block;
+    }
+    
+    .pass-status.pass {
+      background: #c6f6d5;
+      color: #22543d;
+    }
+    
+    .pass-status.fail {
+      background: #fed7d7;
+      color: #742a2a;
+    }
+    
+    .score-message {
+      font-size: 1.2rem;
+      color: #2d3748;
+      margin-bottom: 2rem;
+    }
+    
+    .retry-btn {
+      background: #48bb78;
+      color: white;
+      padding: 1rem 2rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .retry-btn:hover {
+      background: #38a169;
+      transform: translateY(-2px);
+    }
+    
+    @media (max-width: 768px) {
+      .header h1 {
+        font-size: 1.8rem;
+      }
+      .score-display {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>✈️ CAA Drone Theory Test</h1>
+      <p>Complete Practice Exam - 40 Questions</p>
+      <div class="test-info">
+        <p><strong>Pass Mark:</strong> 30 out of 40 (75%)</p>
+        <p><strong>Time:</strong> Untimed (Official test allows up to 90 minutes)</p>
+        <p><strong>Format:</strong> Multiple choice questions</p>
+      </div>
+    </div>
+
+    <div class="progress-bar">
+      <div class="progress-info">
+        <span>Progress</span>
+        <span id="progressText">0 / 40 answered</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+    </div>
+
+    <div class="quiz-card" id="quizCard">
+      <form id="quizForm">
+        
+        <div class="question-block">
+          <p class="question-text">1. You're flying near a coastal area when you spot a coastguard helicopter approaching your position. What is the correct action?</p>
+          <div class="options">
+            <label class="option-label"><input type="radio" name="q1" value="A"><span>Continue flying but monitor the helicopter's path</span></label>
+            <label class="option-label"><input type="radio" name="q1" value="B"><span>Land immediately and wait for the helicopter to clear the area</span></label>
+            <label class="option-label"><input type="radio" name="q1" value="C"><span>Fly lower to stay under the helicopter's flight path</span></label>
+            <label class="option-label"><input type="radio" name="q1" value="D"><span>Increase altitude to maintain separation</span></label>
+          </div>
+        </div>
+
+        <div class="question-block">
+          <p class="question-text">2. What are the maximum altitude limits for recreational drone flying in the UK?</p>
+          <div class="options">
+            <label class="option-label"><input type="radio" name="q2" value="A"><span>Up to 500 feet (150m) above ground level</span></label>
+            <label class="option-label"><input type="radio" name="q2" value="B"><span>Maximum 400 feet (120m) above the surface</span></label>
+            <label class="option-label"><input type="radio" name="q2" value="C"><span>No limit if you maintain visual line of sight</span></label>
+            <label class="option-label"><input type="radio" name="q2" value="D"><span>Up to 1000 feet in rural areas</span></label>
+          </div>
+        </div>
+
+        <div class="question-block">
+          <p class="question-text">3. Tom has a 230g drone while Sarah operates a 5kg drone. Who can fly briefly over a small gathering of family members in a private garden?</p>
+          <div class="options">
+            <label class="option-label"><input type="radio" name="q3" value="A"><span>Both Tom and Sarah</span></label>
+            <label class="option-label"><input type="radio" name="q3" value="B"><span>Only Tom with his lighter drone</span></label>
+            <label class="option-label"><input type="radio" name="q3" value="C"><span>Only Sarah with her heavier drone</span></label>
+            <label class="option-label"><input type="radio" name="q3" value="D"><span>Neither of them</span></label>
+          </div>
+        </div>
+
+        <div class="question-block">
+          <p class="question-text">4. During a flight in a park, you notice fire engines responding to an incident nearby. What should you do?</p>
+          <div class="options">
+            <label class="option-label"><input type="radio" name="q4" value="A"><span>Continue flying but avoid the emergency vehicles</span></label>
+            <label class="option-label"><input type="radio" name="q4" value="B"><span>Land immediately and do not fly until the emergency has passed</span></label>
+            <label class="option-label"><input type="radio" name="q4" value="C"><span>Move to a different part of the park</span></label>
+            <label class="option-label"><input type="radio" name="q4" value="D"><span>Offer to help film the incident for the fire service</span></label>
+          </div>
+        </div>
+
+        <div class="question-block">
+          <p class="question-text">5. What is the most reliable method to verify current airspace restrictions before flying?</p>
+          <div class="options">
+            <label class="option-label"><input type="radio" name="q5" value="A"><span>Check with local drone enthusiasts</span></label>
+            <label class="option-label"><input type="radio" name="q5" value="B"><span>Use official drone safety apps or NATS Drone Assist</span></label>
+            <label class="option-label"><input type="radio" name="q5" value="C"><span>Look for physical signs in the area</span></label>
+            <label class="option-label"><input type="radio" name="q5" value="D"><span>Assume it's clear if you can't see any aircraft</span></label>
+          </div>
+        </div>
+
+        <div class="question-block">
+          <p class="question-text">6. Maria wants to use her drone to deliver a small package containing electronic components to a colleague across a river. Is this permitted?</p>
+          <div class="options">
+            <label class="option-label"><input type="radio" name="q6" value="A"><span>Yes, if the package is securely attached</span></label>
+            <label class="option-label"><input type="radio" name="q6" value="B"><span>Yes, but only over private property</span></label>
+            <label class="option-label"><input type="radio" name="q6" value="C"><span>No, dropping any articles that could pose a hazard is prohibited</span></label>
+            <label class="option-label"><input type="radio" name="q6" value="D"><span>Yes, during daylight hours only</span></label>
+          </div>
+        </div>
+
+        <div class="question-block">
+          <p class="question-text">7. During a flight, your drone has a near miss with a paraglider. What is your legal obligation?</p>
+          <div class="options">
+            <label class="option-label"><input type="radio" name="q7" value="A"><span>No action required since no collision occurred</span></label>
+            <label class="option-label"><input type="radio" name="q7" value="B"><span>Report the incident to the CAA via their online portal</span></label>
+            <label class="option-label"><input type="radio" name="q7" value="C"><span>Inform the local flying club</span></label>
+            <label class="option-label"><input type="radio" name="q7" value="D"><span>Only report if there was damage</span></label>
+          </div>
+        </div>
+
+        <div class="question-block">
+          <p class="question-text">8. Why is maintaining clear visual orientation of your drone crucial during flight?</p>
+          <div class="options">
+            <label class="option-label"><input type="radio" name="q8" value="A"><span>To capture better aerial footage</span></label>
+            <label class="option-label"><input type="radio" name="q8" value="B"><span>To ensure proper control and avoid collisions with other airspace users</span></label>
+            <label class="option-label"><input type="radio" name="q8" value="C"><span>To comply with camera settings</span></label>
+            <label class="option-label"><input type="radio" name="q8" value="D"><span>To maximize GPS signal strength</span></label>
+          </div>
+        </div>
+
+        <div class="question-block">
+          <p class="question-text">9. James wants to operate his drone while riding an electric scooter through a park. Is this allowed?</p>
+          <div class="options">
+            <label class="option-label"><input type="radio" name="q9" value="A"><span>Yes, if he's an experienced pilot</span></label>
+            <label class="option-label"><input type="radio" name="q9" value="B"><span>Yes, at slow speeds only</span></label>
+            <label class="option-label"><input type="radio" name="q9" value="C"><span>No, operating a drone from a moving vehicle is prohibited</span></label>
+            <label class="option-label"><input type="radio" name="q9" value="D"><span>Yes, in open areas only</span></label>
+          </div>
+        </div>
+
+        <div class="question-block">
+          <p class="question-text">10. How can you obtain permission to fly outside the standard Drone Code parameters?</p>
+          <div class="options">
+            <label class="option-label"><input type="radio" name="q10" value="A"><span>Such operations are never permitted</span></label>
+            <label class="option-label"><input type="radio" name="q10" value="B"><span>Apply for operational authorisation from the CAA</span></label>
+            <label class="option-label"><input type="radio" name="q10" value="C"><span>Get written permission from local authorities</span></label>
+            <label class="option-label"><input type="radio" name="q10" value="D"><span>Only commercial operators can get such permissions</span></label>
+          </div>
+        </div>
+
+        <div class="question-block">
+          <p class="question-text">11. What is the primary safety reason for keeping your drone's software updated?</p>
+          <div class="options">
+            <label class="option-label"><input type="radio" name="q11" value="A"><span>To access new camera features</span></label>
+            <label class="option-label"><input type="radio" name="q11" value="B"><span>To ensure safety systems and flight controls function correctly</span></label>
+            <label class="option-label"><input type="radio" name="q11" value="C"><span>To increase maximum flight speed</span></label>
+            <label class="option-label"><input type="radio" name="q11" value="D"><span>Software updates are optional for drones</span></label>
+          </div>
+        </div>
+
+        <div class="question-block">
+          <p class="question-text">12. Which pre-flight checks are essential for safe drone operation?</p>
+          <div class="options">
+            <label class="option-label"><input type="radio" name="q12" value="A"><span>Weather assessment, airspace verification, and equipment inspection</span></label>
+            <label class="option-label"><input type="radio" name="q12" value="B"><span>Only battery level check</span></label>
+            <label class="option-label"><input type="radio" name="q12" value="C"><span>Only checking for other aircraft</span></label>
+            <label class="option-label"><input type="radio" name="q12" value="D"><span>Only camera functionality</span></label>
+          </div>
+        </div>
+
+        <div class="question-block">
+          <p class="question-text">13. Chloe wants to fly her 248g drone over a crowded music festival. Is this permitted?</p>
+          <div class="options">
+            <label class="option-label"><input type="radio" name="q13" value="A"><span>Yes, because her drone is under 250g</span></label>
+            <label class="option-label"><input type="radio" name="q13" value="B"><span>No, flying over assemblies of people is prohibited regardless of drone weight</span></label>
+            <label class="option-label"><input type="radio" name="q13" value="C"><span>Yes, if she maintains 30m altitude</span></label>
+            <label class="option-label"><input type="radio" name="q13" value="D"><span>Yes, with event organizer permission</span></label>
+          </div>
+        </div>
+
+        <div class="question-block">
+          <p class="question-text">14. During a flight, your drone passes behind a large building and loses visual contact for 10 seconds. Is this acceptable?</p>
+          <div class="options">
+            <label class="option-label"><input type="radio" name="q14" value="A"><span>Yes, if the drone has GPS tracking</span></label>
+            <label class="option-label"><input type="radio" name="q14" value="B"><span>No, continuous visual line of sight must be maintained at all times</span></label>
+            <label class="option-label"><input type="radio" name="q14" value="C"><span>Yes, for brief periods under 15 seconds</span></label>
+            <label class="option-label"><input type="radio" name="q14" value="D"><span>Yes, in urban areas only</span></label>
+          </div>
+        </div>
+
+        <div class="question-block">
+          <p class="question-text">15. Which locations typically have permanently restricted airspace for drones?</p>
+          <div class="options">
+            <label class="option-label"><input type="radio" name="q15" value="A"><span>Public parks and beaches</span></label>
+            <label class="option-label"><input type="radio" name="q15" value="B"><span>Airports, military installations, and nuclear facilities</span></label>
+            <label class="option-label"><input type="radio" name="q15" value="C"><span>Residential neighborhoods</span></label>
+            <label class="option-label"><input type="radio" name="q15" value="D"><span>Farmland and rural areas</span></label>
+          </div>
+        </div>
+
+        <div class="question-block">
+          <p class="question-text">16. You find an open field located 2km from an airport boundary. Can you fly there?</p>
+          <div class="options">
+            <label class="option-label"><input type="radio" name="q16" value="A"><span>Yes, it's outside the airport property</span></label>
+            <label class="option-label"><input type="radio" name="q16" value="B"><span>Check for Flight Restriction Zones and obtain necessary permissions</span></label>
+            <label class="option-label"><input type="radio" name="q16" value="C"><span>Yes, if you stay below 25m altitude</span></label>
+            <label class="option-label"><input type="radio" name="q16" value="D"><span>Airport restrictions don't extend beyond their perimeter</span></label>
+          </div>
+        </div>
+
+        <div class="question-block">
+          <p class="question-text">17. David wants to fly using FPV goggles exclusively. What additional requirement must he meet?</p>
+          <div class="options">
+            <label class="option-label"><input type="radio" name="q17" value="A"><span>Register with the CAA as an FPV operator</span></label>
+            <label class="option-label"><input type="radio" name="q17" value="B"><span>Have a visual observer maintaining direct sight of the drone</span></label>
+            <label class="option-label"><input type="radio" name="q17" value="C"><span>Limit flights to 50m maximum altitude</span></label>
+            <label class="option-label"><input type="radio" name="q17" value="D"><span>Use a drone under 250g only</span></label>
+          </div>
+        </div>
+
+        <div class="question-block">
+          <p class="question-text">18. A 7kg drone is operating at 100m altitude in open countryside. What separation distances apply?</p>
+          <div class="options">
+            <label class="option-label"><input type="radio" name="q18" value="A"><span>At least 150m from congested areas and 50m from people</span></label>
+            <label class="option-label"><input type="radio" name="q18" value="B"><span>30m from uninvolved people</span></label>
+            <label class="option-label"><input type="radio" name="q18" value="C"><span>No specific distance requirements</span></label>
+            <label class="option-label"><input type="radio" name="q18" value="D"><span>100m from all buildings</span></label>
+          </div>
+        </div>
+
+        <div class="question-block">
+          <p class="question-text">19. What distinguishes a Flyer ID from an Operator ID?</p>
+          <div class="options">
+            <label class="option-label"><input type="radio" name="q19" value="A"><span>They are identical and interchangeable</span></label>
+            <label class="option-label"><input type="radio" name="q19" value="B"><span>Flyer ID identifies the pilot; Operator ID identifies the drone owner</span></label>
+            <label class="option-label"><input type="radio" name="q19" value="C"><span>Flyer ID is for commercial operations only</span></label>
+            <label class="option-label"><input type="radio" name="q19" value="D"><span>Operator ID is only needed for drones over 10kg</span></label>
+          </div>
+        </div>
+
+        <div class="question-block">
+          <p class="question-text">20. If you own multiple drones requiring registration, how should you display your Operator ID?</p>
+          <div class="options">
+            <label class="option-label"><input type="radio" name="q20" value="A"><span>Register each drone with a unique ID</span></label>
+            <label class="option-label"><input type="radio" name="q20" value="B"><span>Use the same Operator ID on all your drones</span></label>
+            <label class="option-label"><input type="radio" name="q20" value="C"><span>Only register the drone you use most frequently</span></label>
+            <label class="option-label"><input type="radio" name="q20" value="D"><span>Operator ID is not required for multiple drones</span></label>
+          </div>
+        </div>
+
+        <div class="question-block">
+          <p class="question-text">21. Your drone accidentally captures footage of a private garden party. What should you do with this recording?</p>
+          <div class="options">
+            <label class="option-label"><input type="radio" name="q21" value="A"><span>Edit out faces and post online</span></label>
+            <label class="option-label"><input type="radio" name="q21" value="B"><span>Keep it as personal footage</span></label>
+            <label class="option-label"><input type="radio" name="q21" value="C"><span>Delete the footage immediately</span></label>
+            <label class="option-label"><input type="radio" name="q21" value="D"><span>Share only with family members</span></label>
+          </div>
+        </div>
+
+        <div class="question-block">
+          <p class="question-text">22. How do the Open A1 and A3 subcategories differ primarily?</p>
+          <div class="options">
+            <label class="option-label"><input type="radio" name="q22" value="A"><span>A1 allows closer proximity to people; A3 requires greater separation</span></label>
+            <label class="option-label"><input type="radio" name="q22" value="B"><span>A1 is for drones under 250g; A3 for heavier drones</span></label>
+            <label class="option-label"><input type="radio" name="q22" value="C"><span>They have identical operating requirements</span></label>
+            <label class="option-label"><input type="radio" name="q22" value="D"><span>A1 is for urban areas; A3 for rural only</span></label>
+          </div>
+        </div>
+
+        <div class="question-block">
+          <p class="question-text">23. Emma has a 249g drone. Ben has a 4kg drone. Who can fly in a public park with people present?</p>
+          <div class="options">
+            <label class="option-label"><input type="radio" name="q23" value="A"><span>Both can fly if they maintain distance</span></label>
+            <label class="option-label"><input type="radio" name="q23" value="B"><span>Only Emma, as Ben must maintain 150m from recreational areas</span></label>
+            <label class="option-label"><input type="radio" name="q23" value="C"><span>Only Ben can fly there</span></label>
+            <label class="option-label"><input type="radio" name="q23" value="D"><span>Neither can fly in public parks</span></label>
+          </div>
+        </div>
+
+        <div class="question-block">
+          <p class="question-text">24. Is it permitted to fly a 2kg drone over a busy railway line during train operations?</p>
+          <div class="options">
+            <label class="option-label"><input type="radio" name="q24" value="A"><span>Yes, if you maintain 120m altitude</span></label>
+            <label class="option-label"><input type="radio" name="q24" value="B"><span>No, you must not fly over or within 50m of railways during operation</span></label>
+            <label class="option-label"><input type="radio" name="q24" value="C"><span>Yes, with network rail permission</span></label>
+            <label class="option-label"><input type="radio" name="q24" value="D"><span>Yes, during off-peak hours</span></label>
+          </div>
+        </div>
+
+        <div class="question-block">
+          <p class="question-text">25. You discover a small airfield not shown on your drone safety app. What should you do?</p>
+          <div class="options">
+            <label class="option-label"><input type="radio" name="q25" value="A"><span>Fly normally since it's not on the app</span></label>
+            <label class="option-label"><input type="radio" name="q25" value="B"><span>Avoid flying and verify if permission is required from the airfield</span></label>
+            <label class="option-label"><input type="radio" name="q25" value="C"><span>Fly below 30m only</span></label>
+            <label class="option-label"><input type="radio" name="q25" value="D"><span>Contact the airfield only if you see aircraft</span></label>
+          </div>
+        </div>
+
+        <div class="question-block">
+          <p class="question-text">26. You're flying from a 60m high cliff edge. What is your maximum permitted altitude?</p>
+          <div class="options">
+            <label class="option-label"><input type="radio" name="q26" value="A"><span>120m above sea level</span></label>
+            <label class="option-label"><input type="radio" name="q26" value="B"><span>120m above the takeoff point (180m above sea level)</span></label>
+            <label class="option-label"><input type="radio" name="q26" value="C"><span>60m above the cliff edge</span></label>
+            <label class="option-label"><input type="radio" name="q26" value="D"><span>No limit when flying from elevated positions</span></label>
+          </div>
+        </div>
+
+        <div class="question-block">
+          <p class="question-text">27. What is the minimum age requirement for registering as a drone operator in the UK?</p>
+          <div class="options">
+            <label class="option-label"><input type="radio" name="q27" value="A"><span>16 years old</span></label>
+            <label class="option-label"><input type="radio" name="q27" value="B"><span>18 years old</span></label>
+            <label class="option-label"><input type="radio" name="q27" value="C"><span>14 years old</span></label>
+            <label class="option-label"><input type="radio" name="q27" value="D"><span>There is no minimum age</span></label>
+          </div>
+        </div>
+
+        <div class="question-block">
+          <p class="question-text">28. When must you conduct a risk assessment before flying?</p>
+          <div class="options">
+            <label class="option-label"><input type="radio" name="q28" value="A"><span>Before every flight operation</span></label>
+            <label class="option-label"><input type="radio" name="q28" value="B"><span>Only for commercial flights</span></label>
+            <label class="option-label"><input type="radio" name="q28" value="C"><span>Only when flying in new locations</span></label>
+            <label class="option-label"><input type="radio" name="q28" value="D"><span>Risk assessments are optional for recreational flying</span></label>
+          </div>
+        </div>
+
+        <div class="question-block">
+          <p class="question-text">29. What should you do if you notice your drone's battery is depleting faster than expected during flight?</p>
+          <div class="options">
+            <label class="option-label"><input type="radio" name="q29" value="A"><span>Continue flying until low battery warning</span></label>
+            <label class="option-label"><input type="radio" name="q29" value="B"><span>Land immediately and investigate the cause</span></label>
+            <label class="option-label"><input type="radio" name="q29" value="C"><span>Fly faster to complete your mission quicker</span></label>
+            <label class="option-label"><input type="radio" name="q29" value="D"><span>Ignore it as battery indicators are often inaccurate</span></label>
+          </div>
+        </div>
+
+        <div class="question-block">
+          <p class="question-text">30. Can you fly your drone in foggy conditions with 200m visibility?</p>
+          <div class="options">
+            <label class="option-label"><input type="radio" name="q30" value="A"><span>Yes, if you stay within visual range</span></label>
+            <label class="option-label"><input type="radio" name="q30" value="B"><span>No, you must maintain clear visual line of sight at all times</span></label>
+            <label class="option-label"><input type="radio" name="q30" value="C"><span>Yes, with enhanced lighting</span></label>
+            <label class="option-label"><input type="radio" name="q30" value="D"><span>Yes, but only below 50m altitude</span></label>
+          </div>
+        </div>
+
+        <div class="question-block">
+          <p class="question-text">31. What is the purpose of the 'return to home' feature on many drones?</p>
+          <div class="options">
+            <label class="option-label"><input type="radio" name="q31" value="A"><span>To automatically return when battery is low or signal is lost</span></label>
+            <label class="option-label"><input type="radio" name="q31" value="B"><span>To quickly capture home location in photos</span></label>
+            <label class="option-label"><input type="radio" name="q31" value="C"><span>To comply with insurance requirements</span></label>
+            <label class="option-label"><input type="radio" name="q31" value="D"><span>To automatically avoid restricted airspace</span></label>
+          </div>
+        </div>
+
+        <div class="question-block">
+          <p class="question-text">32. How often should you calibrate your drone's compass?</p>
+          <div class="options">
+            <label class="option-label"><input type="radio" name="q32" value="A"><span>Before first flight and when moving to new locations</span></label>
+            <label class="option-label"><input type="radio" name="q32" value="B"><span>Once every six months</span></label>
+            <label class="option-label"><input type="radio" name="q32" value="C"><span>Only when prompted by the drone software</span></label>
+            <label class="option-label"><input type="radio" name="q32" value="D"><span>Compass calibration is never required</span></label>
+          </div>
+        </div>
+
+        <div class="question-block">
+          <p class="question-text">33. What does the term 'congested area' mean in drone regulations?</p>
+          <div class="options">
+            <label class="option-label"><input type="radio" name="q33" value="A"><span>Any urban environment</span></label>
+            <label class="option-label"><input type="radio" name="q33" value="B"><span>An area with large buildings</span></label>
+            <label class="option-label"><input type="radio" name="q33" value="C"><span>Any area subject to traffic congestion</span></label>
+            <label class="option-label"><input type="radio" name="q33" value="D"><span>An area substantially used for residential, commercial or recreational purposes</span></label>
+          </div>
+        </div>
+
+        <div class="question-block">
+          <p class="question-text">34. Can you fly your drone within 50m of a busy school playground during break time?</p>
+          <div class="options">
+            <label class="option-label"><input type="radio" name="q34" value="A"><span>Yes, if you have school permission</span></label>
+            <label class="option-label"><input type="radio" name="q34" value="B"><span>No, you must not fly within 50m of people not under your control</span></label>
+            <label class="option-label"><input type="radio" name="q34" value="C"><span>Yes, with a drone under 250g</span></label>
+            <label class="option-label"><input type="radio" name="q34" value="D"><span>Yes, if you stay above 30m altitude</span></label>
+          </div>
+        </div>
+
+        <div class="question-block">
+          <p class="question-text">35. What should you consider regarding magnetic interference when choosing a takeoff location?</p>
+          <div class="options">
+            <label class="option-label"><input type="radio" name="q35" value="A"><span>Avoid areas near power lines, reinforced concrete, and large metal structures</span></label>
+            <label class="option-label"><input type="radio" name="q35" value="B"><span>Magnetic interference doesn't affect modern drones</span></label>
+            <label class="option-label"><input type="radio" name="q35" value="C"><span>Only avoid areas near airports</span></label>
+            <label class="option-label"><input type="radio" name="q35" value="D"><span>Takeoff from metal surfaces for better grounding</span></label>
+          </div>
+        </div>
+
+        <div class="question-block">
+          <p class="question-text">36. How does wind speed affect your drone flight operations?</p>
+          <div class="options">
+            <label class="option-label"><input type="radio" name="q36" value="A"><span>High winds reduce battery life and make control difficult</span></label>
+            <label class="option-label"><input type="radio" name="q36" value="B"><span>Wind has no effect on drone performance</span></label>
+            <label class="option-label"><input type="radio" name="q36" value="C"><span>Wind only affects video quality</span></label>
+            <label class="option-label"><input type="radio" name="q36" value="D"><span>Drones fly better in windy conditions</span></label>
+          </div>
+        </div>
+
+        <div class="question-block">
+          <p class="question-text">37. What is the minimum distance you should maintain from wildlife during flight?</p>
+          <div class="options">
+            <label class="option-label"><input type="radio" name="q37" value="A"><span>No specific distance required</span></label>
+            <label class="option-label"><input type="radio" name="q37" value="B"><span>At least 50m to avoid disturbing animals</span></label>
+            <label class="option-label"><input type="radio" name="q37" value="C"><span>Wildlife isn't affected by drones</span></label>
+            <label class="option-label"><input type="radio" name="q37" value="D"><span>Only avoid protected species</span></label>
+          </div>
+        </div>
+
+        <div class="question-block">
+          <p class="question-text">38. Can you fly your drone indoors in a large warehouse?</p>
+          <div class="options">
+            <label class="option-label"><input type="radio" name="q38" value="A"><span>Yes, without any restrictions</span></label>
+            <label class="option-label"><input type="radio" name="q38" value="B"><span>No, drone flying is only permitted outdoors</span></label>
+            <label class="option-label"><input type="radio" name="q38" value="C"><span>Yes, but most drone regulations still apply for safety</span></label>
+            <label class="option-label"><input type="radio" name="q38" value="D"><span>Only with special indoor certification</span></label>
+          </div>
+        </div>
+
+        <div class="question-block">
+          <p class="question-text">39. What should you do if you lose orientation of your drone during flight?</p>
+          <div class="options">
+            <label class="option-label"><input type="radio" name="q39" value="A"><span>Panic and shut down the motors</span></label>
+            <label class="option-label"><input type="radio" name="q39" value="B"><span>Use the return to home function if available</span></label>
+            <label class="option-label"><input type="radio" name="q39" value="C"><span>Fly higher to get better perspective</span></label>
+            <label class="option-label"><input type="radio" name="q39" value="D"><span>Continue flying in the same direction</span></label>
+          </div>
+        </div>
+
+        <div class="question-block">
+          <p class="question-text">40. What is your primary responsibility as a drone pilot?</p>
+          <div class="options">
+            <label class="option-label"><input type="radio" name="q40" value="A"><span>To ensure the safety of people, property, and other aircraft</span></label>
+            <label class="option-label"><input type="radio" name="q40" value="B"><span>To capture the best possible footage</span></label>
+            <label class="option-label"><input type="radio" name="q40" value="C"><span>To avoid damaging your equipment</span></label>
+            <label class="option-label"><input type="radio" name="q40" value="D"><span>To comply with social media guidelines</span></label>
+          </div>
+        </div>
+
+        <div class="button-container">
+          <button type="button" class="submit-btn" id="submitBtn">Submit Answers</button>
+          <button type="button" class="reset-btn" id="resetBtn">Reset Test</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="results-card" id="resultsCard">
+      <h2>Test Results</h2>
+      <div class="score-display" id="scoreDisplay">0/40</div>
+      <div class="pass-status" id="passStatus">Status</div>
+      <p class="score-message" id="scoreMessage"></p>
+      <button class="retry-btn" id="retryBtn">Take Test Again</button>
+    </div>
+  </div>
+
+  <script>
+    // Correct answers
+    const correctAnswers = {
+      q1: "B", q2: "B", q3: "B", q4: "B", q5: "B", 
+      q6: "C", q7: "B", q8: "B", q9: "C", q10: "B",
+      q11: "B", q12: "A", q13: "B", q14: "B", q15: "B",
+      q16: "B", q17: "B", q18: "A", q19: "B", q20: "B",
+      q21: "C", q22: "A", q23: "B", q24: "B", q25: "B",
+      q26: "B", q27: "B", q28: "A", q29: "B", q30: "B",
+      q31: "A", q32: "A", q33: "D", q34: "B", q35: "A",
+      q36: "A", q37: "B", q38: "C", q39: "B", q40: "A"
+    };
+
+    // DOM elements
+    const quizForm = document.getElementById('quizForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const retryBtn = document.getElementById('retryBtn');
+    const progressText = document.getElementById('progressText');
+    const progressFill = document.getElementById('progressFill');
+    const quizCard = document.getElementById('quizCard');
+    const resultsCard = document.getElementById('resultsCard');
+    const scoreDisplay = document.getElementById('scoreDisplay');
+    const passStatus = document.getElementById('passStatus');
+    const scoreMessage = document.getElementById('scoreMessage');
+
+    // Update progress
+    function updateProgress() {
+      const answered = document.querySelectorAll('input[type="radio"]:checked').length;
+      const progress = (answered / 40) * 100;
+      
+      progressText.textContent = `${answered} / 40 answered`;
+      progressFill.style.width = `${progress}%`;
+    }
+
+    // Add event listeners to all radio buttons
+    document.querySelectorAll('input[type="radio"]').forEach(radio => {
+      radio.addEventListener('change', updateProgress);
+    });
+
+    // Submit button handler
+    submitBtn.addEventListener('click', function() {
+      const answered = document.querySelectorAll('input[type="radio"]:checked').length;
+      
+      if (answered < 40) {
+        if (confirm(`You have only answered ${answered} out of 40 questions. Are you sure you want to submit?`)) {
+          calculateScore();
+        }
+      } else {
+        calculateScore();
+      }
+    });
+
+    // Calculate score
+    function calculateScore() {
+      let score = 0;
+      const formData = new FormData(quizForm);
+      
+      // Check each question
+      for (let i = 1; i <= 40; i++) {
+        const questionName = `q${i}`;
+        const userAnswer = formData.get(questionName);
+        const correctAnswer = correctAnswers[questionName];
+        
+        if (userAnswer === correctAnswer) {
+          score++;
+        }
+        
+        // Highlight correct/incorrect answers
+        highlightAnswers(questionName, correctAnswer);
+      }
+      
+      // Display results
+      showResults(score);
+    }
+
+    // Highlight correct and incorrect answers
+    function highlightAnswers(questionName, correctAnswer) {
+      const options = document.querySelectorAll(`input[name="${questionName}"]`);
+      
+      options.forEach(option => {
+        const label = option.closest('.option-label');
+        if (option.value === correctAnswer) {
+          label.classList.add('correct');
+        } else if (option.checked && option.value !== correctAnswer) {
+          label.classList.add('incorrect');
+        }
+      });
+    }
+
+    // Show results
+    function showResults(score) {
+      const percentage = (score / 40) * 100;
+      const passed = score >= 30;
+      
+      scoreDisplay.textContent = `${score}/40`;
+      passStatus.textContent = passed ? "PASS" : "FAIL";
+      passStatus.className = `pass-status ${passed ? 'pass' : 'fail'}`;
+      
+      if (passed) {
+        scoreMessage.textContent = `Congratulations! You scored ${percentage.toFixed(1)}% and passed the test.`;
+      } else {
+        scoreMessage.textContent = `You scored ${percentage.toFixed(1)}%. You need at least 75% (30/40) to pass.`;
+      }
+      
+      quizCard.style.display = 'none';
+      resultsCard.classList.add('show');
+    }
+
+    // Reset button handler
+    resetBtn.addEventListener('click', function() {
+      if (confirm('Are you sure you want to reset all answers?')) {
+        quizForm.reset();
+        updateProgress();
+        
+        // Remove highlighting
+        document.querySelectorAll('.option-label').forEach(label => {
+          label.classList.remove('correct', 'incorrect');
+        });
+      }
+    });
+
+    // Retry button handler
+    retryBtn.addEventListener('click', function() {
+      quizForm.reset();
+      updateProgress();
+      resultsCard.classList.remove('show');
+      quizCard.style.display = 'block';
+      
+      // Remove highlighting
+      document.querySelectorAll('.option-label').forEach(label => {
+        label.classList.remove('correct', 'incorrect');
+      });
+      
+      // Scroll to top
+      window.scrollTo(0, 0);
+    });
+
+    // Initialize progress
+    updateProgress();
+  </script>
+</body>
+</html>
